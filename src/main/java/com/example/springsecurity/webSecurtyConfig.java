@@ -18,7 +18,7 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 @EnableWebSecurity
 public class webSecurtyConfig extends WebSecurityConfigurerAdapter {
 
-    @Override
+    @Override//darle permisios a la paginas y definir que roles de usuarios pueden accesar
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/hola").permitAll()//permitir peticion sin autenticar
@@ -30,7 +30,7 @@ public class webSecurtyConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
         ;
     }
-    @Bean
+    @Bean//ajuste de firrewall dejarlo por defecto en general
     public HttpFirewall looseHttpFirewall(){
         StrictHttpFirewall firewall = new StrictHttpFirewall();
         firewall.setAllowBackSlash(true);
@@ -40,7 +40,7 @@ public class webSecurtyConfig extends WebSecurityConfigurerAdapter {
         return firewall;
     }
 
-    @Override
+    @Override//crear usuarios y darle roles de acceso
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .passwordEncoder(passwordEncoder())
