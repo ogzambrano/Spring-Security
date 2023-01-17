@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
 
@@ -20,7 +22,7 @@ public class webSecurtyConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/hola").permitAll()//permitir peticion sin autenticar
-                //.antMatchers("/boostrap").hasRole("ADMIN")
+                .antMatchers("/boostrap").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -41,14 +43,14 @@ public class webSecurtyConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("user").password("password").roles("USER")
+                .passwordEncoder(passwordEncoder())
+                .withUser("user").password(passwordEncoder().encode("password")).roles("USER")
                 .and()//crea usuarios en memoria para el acceso a las paginas
-                .withUser("admin").password("password").roles("USER","ADMIN");
+                .withUser("admin").password(passwordEncoder().encode("password")).roles("USER","ADMIN");
     }
-/*
-    @Bean
-    @Override
-    public UserDetailsService userDetailsServiceBean() throws Exception {
-        return super.userDetailsServiceBean();
-    }*/
+
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
 }
